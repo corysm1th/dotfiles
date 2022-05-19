@@ -18,10 +18,20 @@
         zsh-vi-mode
         zsh-syntax-highlighting
 
+### tmux
+
+* Prefix Key: Ctrl-Space
+* Prefix, Enter: Binary space partitioned panes
+* Prefix, {j,k,h,l}: Vim style pane focus
+* TPM Plugins
+                nord-tmux
+
 ## Prerequisites
 
 * Install zsh (package manager)
-* Install JetBrains Mono patched with Nerd Font
+* Install JetBrains Mono patched with Nerd Font (included)
+* Install tmux (pakcage manager)
+* Install TPM (tmux plugin manager) `$ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm`
 
 ## Project Structure
 
