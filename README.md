@@ -10,6 +10,7 @@
 ### zsh
 
 * powerlevel10k prompt
+* GOROOT/GOPATH
 
 #### zsh plugins
 
