@@ -14,7 +14,13 @@
 
 #### zsh plugins
 
+        aws
+        dotenv
+        gcloud
         git
+        helm
+        kubectl
+        tmux
         zsh-vi-mode
         zsh-syntax-highlighting
 
@@ -24,6 +30,7 @@
 * Prefix, Enter: Binary space partitioned panes
 * Prefix, {j,k,h,l}: Vim style pane focus
 * TPM Plugins
+
                 nord-tmux
 
 ## Prerequisites
@@ -50,6 +57,10 @@ git clone https://github.com/corysm1th/dotfiles.git
 From here, change to the `dotfiles` directory and run `make install`.
 
 The `Makefile` will copy `oh-my-zsh` and `.zshrc` to the home folder.
+
+### .env and local settings
+
+`zsh` is configured with a `dotenv` plugin which will automatically source any `.env` files it finds when you `cd` into a directory. So you can keep your personal stuff (SSH keys, API tokens) in the `.env` file in your home directory, and keep your other dotfiles managed in version control.
 
 ## vscode extensions
 
