@@ -2,7 +2,16 @@
 
 pgrep -x sxhkd > /dev/null || sxhkd &
 
-bspc monitor -d I II III IV V VI VII VIII IX X
+xrandr | grep "DP-1 connected" && xrandr --output DP-1 --mode 2560x1440
+
+xrandr | grep "DP-2 connected" && xrandr --output DP-2 --mode 2560x1440
+
+xrandr | grep "DP-2 connected" && \
+    bspc monitor DP-1 -d I II III IV V && \
+    bspc monitor DP-2 -d VI VII VIII IX X
+
+xrandr | grep "DP-2 connected" || \
+    bspc monitor -d I II III IV V VI VII VIII IX X
 
 bspc config border_width         2
 bspc config window_gap          12
@@ -16,8 +25,6 @@ bspc rule -a Chromium desktop='^2'
 bspc rule -a mplayer2 state=floating
 bspc rule -a Kupfer.py focus=on
 bspc rule -a Screenkey manage=off
-
-. ~/.config/bspwm/.env
 
 .config/polybar/launch.sh
 

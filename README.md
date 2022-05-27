@@ -38,7 +38,6 @@
 * Install zsh (package manager)
 * Install JetBrains Mono patched with Nerd Font (included)
 * Install tmux (pakcage manager)
-* Install TPM (tmux plugin manager) `$ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm`
 
 ## Project Structure
 
@@ -67,3 +66,18 @@ The `Makefile` will copy `oh-my-zsh` and `.zshrc` to the home folder.
 vs code extensions are listed at `vscode-extensions.txt`
 
 The can be restored by running `cat vscode-extensions.txt | xargs -L 1 code --install-extension`
+
+## Secure Screen Locker
+
+https://github.com/google/xsecurelock
+https://packages.ubuntu.com/search?keywords=xsecurelock
+
+## Make bspwm the window manager in XFCE
+
+```sh
+# change to bspwm
+xfconf-query -c xfce4-session -p /sessions/Failsafe/Client0_Command -t string -sa bspwm
+
+# revert to xfwm4
+xfconf-query -c xfce4-session -p /sessions/Failsafe/Client0_Command -t string -sa xfwm4
+```
