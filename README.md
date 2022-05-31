@@ -35,9 +35,11 @@
 
 ## Prerequisites
 
-* Install zsh (package manager)
 * Install JetBrains Mono patched with Nerd Font (included)
-* Install tmux (pakcage manager)
+
+```sh
+sudo apt install git curl zsh tmux vim bspwm sxhkd polybar rofi
+```
 
 ## Project Structure
 
@@ -72,12 +74,3 @@ The can be restored by running `cat vscode-extensions.txt | xargs -L 1 code --in
 https://github.com/google/xsecurelock
 https://packages.ubuntu.com/search?keywords=xsecurelock
 
-## Make bspwm the window manager in XFCE
-
-```sh
-# change to bspwm
-xfconf-query -c xfce4-session -p /sessions/Failsafe/Client0_Command -t string -sa bspwm
-
-# revert to xfwm4
-xfconf-query -c xfce4-session -p /sessions/Failsafe/Client0_Command -t string -sa xfwm4
-```
