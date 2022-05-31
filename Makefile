@@ -44,8 +44,9 @@ $(HOME)/.oh-my-zsh/custom/plugins/zsh-vi-mode:
 
 $(HOME)/.p10k.zsh: $(HOME)/.oh-my-zsh/custom/themes/powerlevel10k
 	cp .p10k.zsh $(HOME)/
-	cp $(HOME)/.zshrc $(HOME)/.zshrc.dotfiles_backup
+	-cp $(HOME)/.zshrc $(HOME)/.zshrc.dotfiles_backup
 	cp .zshrc $(HOME)/
+	chsh -s /bin/zsh
 
 $(HOME)/.config/alacritty:
 	cp -r alacritty $(HOME)/.config/
@@ -55,9 +56,13 @@ $(HOME)/.config/alacritty:
 install: $(HOME)/.config \
 	fonts \
 	$(HOME)/.config/bspwm $(HOME)/.config/sxhkd $(HOME)/.config/rofi $(HOME)/.config/polybar \
-	zsh tmux alacritty
+	zsh tmux alacritty rust
 
 alacritty: $(HOME)/.config/alacritty
+	-mkdir -p $(HOME)/src/github.com/alacritty
+	-cd $(HOME)/src/github.com/alacritty && git clone https://github.com/alacritty/alacritty.git
+	-cd $(HOME)/src/github.com/alacritty/alacritty && cargo build --release
+	-sudo cp $(HOME)/src/github.com/alacritty/alacritty/target/release/alacritty /usr/local/bin/
 
 tmux: $(HOME)/.tmux.conf $(HOME)/.tmux/plugins/tpm
 
