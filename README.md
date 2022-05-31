@@ -74,3 +74,20 @@ The can be restored by running `cat vscode-extensions.txt | xargs -L 1 code --in
 https://github.com/google/xsecurelock
 https://packages.ubuntu.com/search?keywords=xsecurelock
 
+## Ubuntu Setup
+
+```sh
+sudo apt install -y bspwm cmake curl feh firefox git gparted htop libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev lxappearance pkg-config pnupg2 podman polybar python3 rofi sxhkd tmux wget zsh
+```
+
+* Xubuntu with XFCE / LighDM
+
+* Supports Secure Boot
+
+* Supports Disk Encryption
+
+  * ZFS partitions cannot be shrunk
+
+
+
+
