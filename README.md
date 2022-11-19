@@ -2,14 +2,20 @@
 
 ## What's Configured Here
 
+### Development Environments
+
+* Python3
+* Go
+* Rust
+
 ### Alacritty
 
-* Dracula Theme
+* KDE Breeze Theme
 * JetBrains Mono with Nerd Font Glyphs
 
 ### zsh
 
-* powerlevel10k prompt
+* powerline-go prompt decorations
 * GOROOT/GOPATH
 
 #### zsh plugins
@@ -33,30 +39,11 @@
 
                 nord-tmux
 
-## Prerequisites
-
-* Install zsh (package manager)
-* Install JetBrains Mono patched with Nerd Font (included)
-* Install tmux (pakcage manager)
-* Install TPM (tmux plugin manager) `$ git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm`
-
 ## Project Structure
 
-The `main` branch assumes a Linux OS.
+The `main` branch assumes KDE Neon. Friendship ended with bspwm. KDE Neon is my best freind now.
 
 Also included are `windows-wsl` and `macos` branches for the respective config file variants.
-
-This repo should be cloned to the `${HOME}` directory.
-
-```sh
-# from ${HOME} working directory
-git clone https://github.com/corysm1th/dotfiles.git
-# results in ${HOME}/dotfiles
-```
-
-From here, change to the `dotfiles` directory and run `make install`.
-
-The `Makefile` will copy `oh-my-zsh` and `.zshrc` to the home folder.
 
 ### .env and local settings
 
@@ -67,3 +54,19 @@ The `Makefile` will copy `oh-my-zsh` and `.zshrc` to the home folder.
 vs code extensions are listed at `vscode-extensions.txt`
 
 The can be restored by running `cat vscode-extensions.txt | xargs -L 1 code --install-extension`
+
+## KDE Setup Notes
+
+* Breeze Dark Theme
+* Panel Tweaks
+        move to top
+        display on both monitors
+        core utilization
+        mem utilization
+        shrink to 50px
+* Remove Title Bars
+* Window Gaps
+* Activity Shortcuts
+        next / prev
+        window opacity
+
