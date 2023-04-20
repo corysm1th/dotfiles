@@ -29,16 +29,18 @@ $(GO): $(HOME)/$(GO_SRC)
 $(HOME)/go/bin/powerline-go:
 	mkdir -p $(HOME)/go/bin
 	curl -L -o $(HOME)/go/bin/powerline-go https://github.com/justjanne/powerline-go/releases/download/$(POWERLINE_GO_VERSION)/powerline-go-linux-amd64
-	sudo chmod +x go/bin/powerline-go
+	sudo chmod +x $(HOME)/go/bin/powerline-go
 
-$(ZSH):
-	sudo apt install -y zsh \
+zsh: $(ZSH) \
 	$(HOME)/.oh-my-zsh/oh-my-zsh.sh \
 	$(HOME)/.zshrc \
 	$(HOME)/.env.example \
 	$(HOME)/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting \
 	$(HOME)/.oh-my-zsh/custom/plugins/zsh-vi-mode \
 	$(HOME)/go/bin/powerline-go
+
+$(ZSH):
+	sudo apt install -y zsh
 
 $(HOME)/.oh-my-zsh/oh-my-zsh.sh:
 	curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh 
@@ -93,6 +95,7 @@ $(HOME)/.tmux/plugins/tpm:
 
 $(HOME)/.tmux.conf: /usr/bin/tmux
 	cp .tmux.conf $(HOME)/.tmux.conf
+	$(HOME)/.tmux/plugins/tpm/scripts/install_plugins.sh
 
 # Python3
 
@@ -103,8 +106,8 @@ $(HOME)/.pyenv:
 	sudo apt install -y make build-essential libssl-dev zlib1g-dev \
 		libbz2-dev libreadline-dev libsqlite3-dev wget curl llvm \
 		libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
-	pyenv install $(PYTHON_VERSION)
-	pyenv global $(PYTHON_VERSION)
+	-$(HOME)/.pyenv/bin/pyenv install $(PYTHON_VERSION)
+	-$(HOME)/.pyenv/bin/pyenv global $(PYTHON_VERSION)
 
 # Targets
 
@@ -126,8 +129,6 @@ python3: /usr/bin/python3
 font: $(FONT)
 
 go: $(GO)
-
-zsh: $(ZSH) 
 
 rust: $(RUST)
 
