@@ -55,18 +55,3 @@ vs code extensions are listed at `vscode-extensions.txt`
 
 The can be restored by running `cat vscode-extensions.txt | xargs -L 1 code --install-extension`
 
-## KDE Setup Notes
-
-* Breeze Dark Theme
-* Panel Tweaks
-        move to top
-        display on both monitors
-        core utilization
-        mem utilization
-        shrink to 50px
-* Remove Title Bars
-* Window Gaps
-* Activity Shortcuts
-        next / prev
-        window opacity
-
