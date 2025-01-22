@@ -146,3 +146,11 @@ utils:
 podman:
 	sudo apt install -y podman podman-docker docker-compose
 
+## REPL Environment
+
+build:
+	nerdctl build -t snbox .
+
+run:
+	nerdctl run --rm -it --user 1000:1000 -v ./:/home/ubuntu/dotfiles snbox
+
