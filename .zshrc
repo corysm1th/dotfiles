@@ -37,8 +37,14 @@ zstyle ':completion:*' verbose true
 zstyle ':completion:*:*:kill:*:processes' list-colors '=(#b) #([0-9]#)*=0=01;31'
 zstyle ':completion:*:kill:*' command 'ps -u $USER -o pid,%cpu,tty,cputime,cmd'
 
+# Add a bin directory for user installed apps
+
+export PATH=${PATH}:${HOME}/.local/bin
+
 ## Source config directory
 
-for file in ${HOME}/.config/zsh/*.sh; do
-  source "$file"
+for file in ${HOME}/.config/zsh/*.zsh; do
+  . "$file"
 done
+
+unset zle_bracketed_paste

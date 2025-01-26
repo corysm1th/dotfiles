@@ -2,33 +2,16 @@
 
 ## What's Configured Here
 
-### Development Environments
-
-* Python3
-* Go
-* Rust
-
 ### Alacritty
 
-* KDE Breeze Theme
+* OneDark Theme
 * JetBrains Mono with Nerd Font Glyphs
 
 ### zsh
 
 * powerline-go prompt decorations
-* GOROOT/GOPATH
-
-#### zsh plugins
-
-        aws
-        dotenv
-        gcloud
-        git
-        helm
-        kubectl
-        tmux
-        zsh-vi-mode
-        zsh-syntax-highlighting
+* jeffreytse/zsh-vi-mode
+* fzf fuzzy finder (command history, files)
 
 ### tmux
 
@@ -37,17 +20,24 @@
 * Prefix, {j,k,h,l}: Vim style pane focus
 * TPM Plugins
 
-                nord-tmux
+### Language Environments
+
+* Go
+* Rust
+* Python3 w/ pyenv and virtualenv
 
 ## Project Structure
 
-The `main` branch assumes KDE Neon. Friendship ended with bspwm. KDE Neon is my best freind now.
+TODO
 
-Also included are `windows-wsl` and `macos` branches for the respective config file variants.
+## Ideas
 
-### .env and local settings
-
-`zsh` is configured with a `dotenv` plugin which will automatically source any `.env` files it finds when you `cd` into a directory. So you can keep your personal stuff (SSH keys, API tokens) in the `.env` file in your home directory, and keep your other dotfiles managed in version control.
+* jump codes: aa ab ac (emacs: ovi, vim: leap)
+* fzf symbol picker: func1, func2
+* fzf marker picker
+* fzf buffer picker
+* diagnostic picker: jump to errors / linter issues
+* bash lsp for zsh with fzf powered code completions
 
 ## vscode extensions
 
