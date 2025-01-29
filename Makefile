@@ -16,6 +16,7 @@
 # font
 # hx
 
+CRI_UTIL := nerdctl
 ALACRITTY := "/usr/local/bin/alacritty"
 ZSH := "/usr/bin/zsh"
 ZSH_CONFIG := $(HOME)/.config/zsh
@@ -65,6 +66,7 @@ fzf: $(ZSH_CONFIG)
 $(HOME)/go/bin/powerline-go: $(GO)
 	$(GO) install github.com/justjanne/powerline-go@latest
 	install .config/zsh/50-powerline-go.zsh $(ZSH_CONFIG)/50-powerline-go.zsh
+	install .config/zsh/pl_colors.json $(ZSH_CONFIG)/pl_colors.json
 
 $(ZSH_CONFIG)/99-zsh-syntax-highlighting.zsh:
 	-rm -Rf ${HOME}/.config/zsh-syntax-highlighting 
@@ -157,8 +159,8 @@ python3: /usr/bin/python3
 #=-=-=-= REPL Environment =-=-=-=
 
 build:
-	nerdctl build -t snbox .
+	$(CRI_UTIL) build -t snbox .
 
 run:
-	#nerdctl run --rm -it --user 1000:1000 -v ./:/home/ubuntu/dotfiles snbox "TERM=xterm-256color /usr/bin/zsh" 
-	nerdctl run --rm -it --user 1000:1000 -v ./:/home/ubuntu/dotfiles snbox env TERM="xterm-256color" /usr/bin/zsh
+	$(CRI_UTIL) run --rm -it --user 1000:1000 -v ./:/home/ubuntu/dotfiles snbox env TERM="xterm-256color" /usr/bin/zsh
+
