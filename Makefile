@@ -1,73 +1,151 @@
-RUST := $(HOME)/.cargo/bin/rustc
+#=-=-=-= Targets
+
+.PHONY: zsh \
+	alacritty \
+	font \
+	fzf \
+	go \
+	hx \
+	neovim \
+	lazyvim \
+	rust \
+	tmux \
+	python3
+
+CRI_UTIL := nerdctl
 ALACRITTY := "/usr/local/bin/alacritty"
-FONT := "/usr/local/share/fonts/JetBrains Mono Regular Nerd Font Complete Mono.ttf"
 ZSH := "/usr/bin/zsh"
-GO_SRC := go1.19.3.linux-amd64.tar.gz
-POWERLINE_GO_VERSION := v1.22.1
+ZSH_CONFIG := $(HOME)/.config/zsh
+GO_SRC := go1.23.5.linux-amd64.tar.gz
 GO := /usr/local/go/bin/go
-PYTHON_VERSION := 3.10
+RUST := $(HOME)/.cargo/bin/rustc
+PYTHON_VERSION := 3.13
+DL_DIR := $(HOME)/Downloads
+LAZYGIT_VERSION := $(shell curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
 
 $(HOME)/.config:
 	mkdir $(HOME)/.config
 
-# JetBrains Mono Font w/ NerdFonts
+$(DL_DIR):
+	mkdir -p $(DL_DIR)
 
-$(FONT):
-	$(shell sudo cp jetbrains_mono_nerd_font/posix/* /usr/local/share/fonts/)
 
-# Go
+#=-=-=-= JetBrains Mono Font w/ NerdFonts =-=-=-=
+
+font: $(DL_DIR)
+	curl -L	https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip \
+		-o $(DL_DIR)/JetBrainsMono.zip 
+	sudo unzip $(DL_DIR)/JetBrainsMono.zip -d /usr/local/share/fonts
+
+
+#=-=-=-= Go =-=-=-=
+
+go: $(GO) $(HOME)/go/bin/gopls $(HOME)/go/bin/dlv
 
 $(HOME)/$(GO_SRC):
 	curl -L -o $(HOME)/$(GO_SRC) https://go.dev/dl/$(GO_SRC)
 
 $(GO): $(HOME)/$(GO_SRC)
+	
 	sudo rm -rf /usr/local/go
 	sudo tar -C /usr/local -xzf $(HOME)/$(GO_SRC)
+	cp .config/zsh/10-go.zsh $(ZSH_CONFIG)/10-go.zsh
 
-# Zsh
+$(HOME)/go/bin/gopls:
+	go install golang.org/x/tools/gopls@latest
 
-$(HOME)/go/bin/powerline-go:
-	mkdir -p $(HOME)/go/bin
-	curl -L -o $(HOME)/go/bin/powerline-go https://github.com/justjanne/powerline-go/releases/download/$(POWERLINE_GO_VERSION)/powerline-go-linux-amd64
-	sudo chmod +x $(HOME)/go/bin/powerline-go
+$(HOME)/go/bin/dlv:
+	go install github.com/go-delve/delve/cmd/dlv@latest
+
+
+#=-=-=-= junegunn/fzf =-=-=-=
+
+fzf: $(ZSH_CONFIG)
+	./fzf_install.sh
+	install .config/zsh/30-fzf.zsh $(ZSH_CONFIG)/30-fzf.zsh
+
+
+#=-=-=-= Neovim =-=-=-=
+clang:
+	sudo apt update && sudo apt install -y clang
+
+luarocks:
+	sudo apt update && sudo apt install -y luarocks
+
+lazygit:
+	curl -Lo $(HOME)/Downloads/lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+	tar -C $(HOME)/.local/bin -xzf $(HOME)/Downloads/lazygit.tar.gz lazygit
+
+neovim:
+	-rm -Rf $(HOME)/Downloads/nvim-linux-x86_64.tar.gz
+	curl -L https://github.com/neovim/neovim/releases/download/v0.10.4/nvim-linux-x86_64.tar.gz -o ${HOME}/Downloads/nvim-linux-x86_64.tar.gz	
+	-sudo rm -Rf /usr/local/nvim-linux-x86_64
+	sudo tar -xzf ${HOME}/Downloads/nvim-linux-x86_64.tar.gz -C /usr/local/
+	-ln -s /usr/local/nvim-linux-x86_64/bin/nvim $(HOME)/.local/bin/nvim
+	
+lazyvim: clang luarocks lazygit
+	-rm -Rf $(HROME)/.local/share/nvim
+	-rm -Rf $(HOME)/.local/state/nvim
+	-rm -Rf $(HOME)/.cache/nvim
+	git clone https://github.com/LazyVim/starter $(HOME)/.config/nvim
+	rm -Rf $(HOME)/.config/nvim/.git
+	nvim --headless "+Lazy! sync" +qa
+
+lazyextras:
+	install .config/nvim/lazyvim.json $(HOME)/.config/nvim/
+	install .config/nvim/lua/plugins/onedark.lua $(HOME)/.config/nvim/lua/plugins/onedark.lua 
+	nvim --headless "+Lazy! sync" +qa
+
+
+#=-=-=-= Zsh =-=-=-=
+
+$(HOME)/go/bin/powerline-go: $(GO)
+	$(GO) install github.com/justjanne/powerline-go@latest
+	install .config/zsh/50-powerline-go.zsh $(ZSH_CONFIG)/50-powerline-go.zsh
+	install .config/zsh/pl_colors.json $(ZSH_CONFIG)/pl_colors.json
+
+$(ZSH_CONFIG)/99-zsh-syntax-highlighting.zsh:
+	-rm -Rf ${HOME}/.config/zsh-syntax-highlighting 
+	git clone --depth 1 https://github.com/zsh-users/zsh-syntax-highlighting.git ${HOME}/.config/zsh-syntax-highlighting
+	install .config/zsh/99-zsh-syntax-highlighting.zsh $(ZSH_CONFIG)/99-zsh-syntax-highlighting.zsh
 
 zsh: $(ZSH) \
-	$(HOME)/.oh-my-zsh/oh-my-zsh.sh \
-	$(HOME)/.zshrc \
-	$(HOME)/.env.example \
-	$(HOME)/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting \
-	$(HOME)/.oh-my-zsh/custom/plugins/zsh-vi-mode \
-	$(HOME)/go/bin/powerline-go
+	$(ZSH_CONFIG) \
+	$(ZSH_CONFIG)/20-zsh-vim-mode.plugin.zsh \
+	fzf \
+	$(HOME)/go/bin/powerline-go \
+	$(ZSH_CONFIG)/99-zsh-syntax-highlighting.zsh
+	install .zshrc $(HOME)/.zshrc
+	install env.example $(HOME)/.env.example
 
 $(ZSH):
 	sudo apt install -y zsh
 
-$(HOME)/.oh-my-zsh/oh-my-zsh.sh:
-	curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh | sh 
-	rm -f $(HOME)/.zshrc
+$(ZSH_CONFIG):
+	mkdir -p $(HOME)/.config/zsh
 
-$(HOME)/.zshrc:
-	cp .zshrc $(HOME)/.zshrc
+$(ZSH_CONFIG)/20-zsh-vim-mode.plugin.zsh:
+	curl -L https://github.com/jeffreytse/zsh-vi-mode/raw/refs/heads/master/zsh-vi-mode.zsh \
+		-o $(ZSH_CONFIG)/20-zsh-vi-mode.plugin.zsh
 
-$(HOME)/.env.example:
-	cp env.example $(HOME)/.env.example
 
-$(HOME)/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting:
-	cd $(HOME) && \
-	git clone https://github.com/zsh-users/zsh-syntax-highlighting.git \
-		$(HOME)/.oh-my-zsh/custom/plugins/zsh-syntax-highlighting
+#=-=-=-= Helix =-=-=-=
 
-$(HOME)/.oh-my-zsh/custom/plugins/zsh-vi-mode:
-	cd $(HOME) && \
-	git clone https://github.com/jeffreytse/zsh-vi-mode \
-		$(HOME)/.oh-my-zsh/custom/plugins/zsh-vi-mode
+hx:
+	$(shell $(PWD)/helix_install.sh)
 
-# Rust
+
+#=-=-=-= Rust =-=-=-=
+
+rust: $(RUST)
 
 $(RUST):
 	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
-# Alacritty
+
+#=-=-=-= Alacritty =-=-=-=
+
+alacritty: $(ALACRITTY)
 
 $(ALACRITTY): $(HOME)/.config/alacritty
 	sudo apt install -y cmake pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3
@@ -85,19 +163,26 @@ $(ALACRITTY): $(HOME)/.config/alacritty
 $(HOME)/.config/alacritty:
 	cp -r alacritty $(HOME)/.config/
 
-# Tmux
+
+#=-=-=-= Tmux =-=-=-=
+
+## TODO
+# LC_CTYPE=UTF-8 <- TODO: figure out where to put this
+
+tmux: /usr/bin/tmux \
+	${HOME}/.config/tmux/plugins/tpm
+	install .config/tmux/tmux.conf ${HOME}/.config/tmux/tmux.conf
+	install .config/tmux/onedark.tmux ${HOME}/.config/tmux/onedark.tmux
+	$(HOME)/.config/tmux/plugins/tpm/scripts/install_plugins.sh
 
 /usr/bin/tmux:
 	sudo apt install -y tmux
 
-$(HOME)/.tmux/plugins/tpm: 
-	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+${HOME}/.config/tmux/plugins/tpm:
+	mkdir -p ${HOME}/.config/tmux/plugins
+	git clone --depth 1 https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
 
-$(HOME)/.tmux.conf: /usr/bin/tmux
-	cp .tmux.conf $(HOME)/.tmux.conf
-	$(HOME)/.tmux/plugins/tpm/scripts/install_plugins.sh
-
-# Python3
+#=-=-=-= Python3 =-=-=-=
 
 $(HOME)/.pyenv:
 	curl https://pyenv.run | bash
@@ -109,40 +194,14 @@ $(HOME)/.pyenv:
 	-$(HOME)/.pyenv/bin/pyenv install $(PYTHON_VERSION)
 	-$(HOME)/.pyenv/bin/pyenv global $(PYTHON_VERSION)
 
-# Targets
-
-.PHONY: all font go zsh rust alacritty tmux utils podman
-
-all: $(HOME)/.config \
-	python3 \
-	utils \
-	podman \
-	font \
-	go \
-	zsh \
-	rust \
-	alacritty \
-	tmux
-
 python3: /usr/bin/python3
 
-font: $(FONT)
 
-go: $(GO)
+#=-=-=-= REPL Environment =-=-=-=
 
-rust: $(RUST)
+build:
+	$(CRI_UTIL) build -t snbox .
 
-alacritty: $(ALACRITTY)
-
-tmux: $(HOME)/.tmux.conf $(HOME)/.tmux/plugins/tpm
-
-# Install apt distro utils
-
-utils:
-	sudo apt install -y feh htop gnupg2 curl wget sysstat iperf3 neofetch
-
-# Podman / Docker Compose
-
-podman:
-	sudo apt install -y podman podman-docker docker-compose
+run:
+	$(CRI_UTIL) run --rm -it --user 1000:1000 -v ${PWD}:/home/ubuntu/dotfiles snbox env TERM="xterm-256color" /usr/bin/zsh
 
