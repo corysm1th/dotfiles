@@ -11,33 +11,34 @@
 
 * powerline-go prompt decorations
 * jeffreytse/zsh-vi-mode
-* fzf fuzzy finder (command history, files)
+* fzf
+* ripgrep
+* batcat manpages
 
-### tmux
+### Neovim
 
-* Prefix Key: Ctrl-Space
-* Prefix, Enter: Binary space partitioned panes
-* Prefix, {j,k,h,l}: Vim style pane focus
-* TPM Plugins
+* LazyVim
+* DAP Debugger
+* Onedark Theme
+* Language Support
+    * Docker
+    * git
+    * Go
+    * Helm
+    * json
+    * markdown
+    * Rust
+    * Terraform
+    * toml
+    * TypeScript
+    * yaml
+    * Zig
 
 ### Language Environments
 
 * Go
 * Rust
 * Python3 w/ pyenv and virtualenv
-
-## Project Structure
-
-TODO
-
-## Ideas
-
-* jump codes: aa ab ac (emacs: ovi, vim: leap)
-* fzf symbol picker: func1, func2
-* fzf marker picker
-* fzf buffer picker
-* diagnostic picker: jump to errors / linter issues
-* bash lsp for zsh with fzf powered code completions
 
 ## vscode extensions
 
