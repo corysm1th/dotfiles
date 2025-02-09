@@ -28,13 +28,13 @@ function powerline_precmd() {
         modules_right="aws,$modules_right"
     fi
 
+    # -modules-right ${modules_right} \ # TODO: investigate why this causes each new line to be off by one position, maybe because of the broken exit module
     eval "$($GOPATH/bin/powerline-go \
       -modules ${modules} \
       -duration $__DURATION \
       -error $? \
       -shell zsh \
       -eval \
-      # -modules-right ${modules_right} \ # TODO: investigate why this causes each new line to be off by one position, maybe because of the broken exit module
       -theme ${HOME}/.config/zsh/pl_colors.json \
       -jobs ${${(%):%j}:-0})"
 

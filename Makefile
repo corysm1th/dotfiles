@@ -6,15 +6,11 @@
 	fzf \
 	go \
 	hx \
+	neovim \
+	lazyvim \
 	rust \
 	tmux \
 	python3
-
-# Verified:
-# zsh
-# go
-# font
-# hx
 
 CRI_UTIL := nerdctl
 ALACRITTY := "/usr/local/bin/alacritty"
@@ -25,6 +21,7 @@ GO := /usr/local/go/bin/go
 RUST := $(HOME)/.cargo/bin/rustc
 PYTHON_VERSION := 3.13
 DL_DIR := $(HOME)/Downloads
+LAZYGIT_VERSION := $(shell curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
 
 $(HOME)/.config:
 	mkdir $(HOME)/.config
@@ -43,15 +40,22 @@ font: $(DL_DIR)
 
 #=-=-=-= Go =-=-=-=
 
-go: $(GO)
+go: $(GO) $(HOME)/go/bin/gopls $(HOME)/go/bin/dlv
 
 $(HOME)/$(GO_SRC):
 	curl -L -o $(HOME)/$(GO_SRC) https://go.dev/dl/$(GO_SRC)
 
 $(GO): $(HOME)/$(GO_SRC)
+	
 	sudo rm -rf /usr/local/go
 	sudo tar -C /usr/local -xzf $(HOME)/$(GO_SRC)
 	cp .config/zsh/10-go.zsh $(ZSH_CONFIG)/10-go.zsh
+
+$(HOME)/go/bin/gopls:
+	go install golang.org/x/tools/gopls@latest
+
+$(HOME)/go/bin/dlv:
+	go install github.com/go-delve/delve/cmd/dlv@latest
 
 
 #=-=-=-= junegunn/fzf =-=-=-=
@@ -59,6 +63,38 @@ $(GO): $(HOME)/$(GO_SRC)
 fzf: $(ZSH_CONFIG)
 	./fzf_install.sh
 	install .config/zsh/30-fzf.zsh $(ZSH_CONFIG)/30-fzf.zsh
+
+
+#=-=-=-= Neovim =-=-=-=
+clang:
+	sudo apt update && sudo apt install -y clang
+
+luarocks:
+	sudo apt update && sudo apt install -y luarocks
+
+lazygit:
+	curl -Lo $(HOME)/Downloads/lazygit.tar.gz "https://github.com/jesseduffield/lazygit/releases/download/v${LAZYGIT_VERSION}/lazygit_${LAZYGIT_VERSION}_Linux_x86_64.tar.gz"
+	tar -C $(HOME)/.local/bin -xzf $(HOME)/Downloads/lazygit.tar.gz lazygit
+
+neovim:
+	-rm -Rf $(HOME)/Downloads/nvim-linux-x86_64.tar.gz
+	curl -L https://github.com/neovim/neovim/releases/download/v0.10.4/nvim-linux-x86_64.tar.gz -o ${HOME}/Downloads/nvim-linux-x86_64.tar.gz	
+	-sudo rm -Rf /usr/local/nvim-linux-x86_64
+	sudo tar -xzf ${HOME}/Downloads/nvim-linux-x86_64.tar.gz -C /usr/local/
+	-ln -s /usr/local/nvim-linux-x86_64/bin/nvim $(HOME)/.local/bin/nvim
+	
+lazyvim: clang luarocks lazygit
+	-rm -Rf $(HROME)/.local/share/nvim
+	-rm -Rf $(HOME)/.local/state/nvim
+	-rm -Rf $(HOME)/.cache/nvim
+	git clone https://github.com/LazyVim/starter $(HOME)/.config/nvim
+	rm -Rf $(HOME)/.config/nvim/.git
+	nvim --headless "+Lazy! sync" +qa
+
+lazyextras:
+	install .config/nvim/lazyvim.json $(HOME)/.config/nvim/
+	install .config/nvim/lua/plugins/onedark.lua $(HOME)/.config/nvim/lua/plugins/onedark.lua 
+	nvim --headless "+Lazy! sync" +qa
 
 
 #=-=-=-= Zsh =-=-=-=
@@ -127,19 +163,24 @@ $(ALACRITTY): $(HOME)/.config/alacritty
 $(HOME)/.config/alacritty:
 	cp -r alacritty $(HOME)/.config/
 
+
 #=-=-=-= Tmux =-=-=-=
 
-tmux: $(HOME)/.tmux.conf $(HOME)/.tmux/plugins/tpm
+## TODO
+# LC_CTYPE=UTF-8 <- TODO: figure out where to put this
+
+tmux: /usr/bin/tmux \
+	${HOME}/.config/tmux/plugins/tpm
+	install .config/tmux/tmux.conf ${HOME}/.config/tmux/tmux.conf
+	install .config/tmux/onedark.tmux ${HOME}/.config/tmux/onedark.tmux
+	$(HOME)/.config/tmux/plugins/tpm/scripts/install_plugins.sh
 
 /usr/bin/tmux:
 	sudo apt install -y tmux
 
-$(HOME)/.tmux/plugins/tpm: 
-	git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-
-$(HOME)/.tmux.conf: /usr/bin/tmux
-	cp .tmux.conf $(HOME)/.tmux.conf
-	$(HOME)/.tmux/plugins/tpm/scripts/install_plugins.sh
+${HOME}/.config/tmux/plugins/tpm:
+	mkdir -p ${HOME}/.config/tmux/plugins
+	git clone --depth 1 https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
 
 #=-=-=-= Python3 =-=-=-=
 
@@ -162,5 +203,5 @@ build:
 	$(CRI_UTIL) build -t snbox .
 
 run:
-	$(CRI_UTIL) run --rm -it --user 1000:1000 -v ./:/home/ubuntu/dotfiles snbox env TERM="xterm-256color" /usr/bin/zsh
+	$(CRI_UTIL) run --rm -it --user 1000:1000 -v ${PWD}:/home/ubuntu/dotfiles snbox env TERM="xterm-256color" /usr/bin/zsh
 

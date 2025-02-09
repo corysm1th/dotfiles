@@ -2,7 +2,9 @@
 
 sudo apt update
 sudo apt install -y --fix-broken \
+    bat \
 	curl \
+    fd-find \
 	feh \
 	git \
 	gnupg2 \
@@ -11,6 +13,7 @@ sudo apt install -y --fix-broken \
 	jq \
 	neofetch \
 	make \
+    ripgrep \
 	sysstat \
 	unzip \
 	wget \
@@ -19,6 +22,9 @@ sudo apt install -y --fix-broken \
 chsh -s $(which zsh)
 
 mkdir -p ${HOME}/.local/bin || true
+
+ln -s $(which fdfind) ~/.local/bin/fd
+ln -s $(which batcat) ~/.local/bin/bat
 
 echo "Shell bootstrap complete. Reboot to apply."
 

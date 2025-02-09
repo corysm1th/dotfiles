@@ -53,8 +53,13 @@ alias ll='ls -alF'
 alias la='ls -A'
 alias l='ls -CF'
 
-# Add a bin directory for user installed apps
+# Better manpages w/ gO section nav
+alias vman="MANPAGER='nvim +Man!' man"
 
+# Default to bat for manpages
+export MANPAGER="sh -c 'sed -u -e \"s/\\x1B\[[0-9;]*m//g; s/.\\x08//g\" | bat -p -lman'"
+
+# Add a bin directory for user installed apps
 export PATH=${PATH}:${HOME}/.local/bin
 
 ## Source config directory

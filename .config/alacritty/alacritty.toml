@@ -1,0 +1,48 @@
+[font]
+normal = { family = "JetBrainsMono Nerd Font", style = "Regular" }
+size = 9
+
+# Colors (One Dark: Darker)
+
+# Default colors
+[colors.primary]
+background = '#0e1013'
+foreground = '#a0a8b7'
+
+# Normal colors
+[colors.normal]
+black   = '#0e1013'
+red     = '#e55561'
+green   = '#8ebd6b'
+yellow  = '#e2b86b'
+blue    = '#4fa6ed'
+magenta = '#bf68d9'
+cyan    = '#48b0bd'
+#white   = '#abb2bf'
+white   = '#ffffff'
+
+# Bright colors
+[colors.bright]
+black   = '#5c6370'
+red     = '#e06c75'
+green   = '#98c379'
+yellow  = '#d19a66'
+blue    = '#61afef'
+magenta = '#c678dd'
+cyan    = '#56b6c2'
+white   = '#ffffff'
+
+[terminal.shell]
+program = /usr/bin/zsh
+args = [
+    "-l", # use a login shell
+    "-c", # run a single command
+    # if tmux exists, attach or create a session named alacritty. otherwise, just open the shell
+    "$(which tmux) attach || $(which tmux) new -s alacritty || zsh -l"
+]
+
+[keyboard]
+bindings = [
+    { key = "Space", mods = "Control", chars = "\u0000" }
+]
+
