@@ -1,7 +1,6 @@
 #=-=-=-= Targets
 
 .PHONY: zsh \
-	alacritty \
 	font \
 	fzf \
 	go \
@@ -9,11 +8,11 @@
 	neovim \
 	lazyvim \
 	rust \
+	wezterm \
 	tmux \
 	python3
 
 CRI_UTIL := nerdctl
-ALACRITTY := "/usr/local/bin/alacritty"
 ZSH := "/bin/zsh"
 ZSH_CONFIG := $(HOME)/.config/zsh
 GO := /usr/local/go/bin/go
@@ -31,10 +30,10 @@ $(DL_DIR):
 
 #=-=-=-= JetBrains Mono Font w/ NerdFonts =-=-=-=
 
-font: $(DL_DIR)
-	curl -L	https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip \
-		-o $(DL_DIR)/JetBrainsMono.zip
-	sudo unzip $(DL_DIR)/JetBrainsMono.zip -d /usr/local/share/fonts
+# font: $(DL_DIR)
+# 	curl -L	https://github.com/ryanoasis/nerd-fonts/releases/latest/download/JetBrainsMono.zip \
+# 		-o $(DL_DIR)/JetBrainsMono.zip
+# 	sudo unzip $(DL_DIR)/JetBrainsMono.zip -d /usr/local/share/fonts
 
 
 #=-=-=-= Go =-=-=-=
@@ -121,30 +120,19 @@ hx:
 #=-=-=-= Rust =-=-=-=
 
 rust: $(RUST)
+	install .config/zsh/80-rust.zsh $(HOME)/.config/zsh/80-rust.zsh
 
 $(RUST):
 	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
+#=-=-=-= Wezterm =-=-=-=
 
-#=-=-=-= Alacritty =-=-=-=
+wezterm: $(HOME)/.config/zsh/15-wezterm.zsh
+	$(shell which /Applications/WezTerm.app/Contents/MacOS/wezterm && mkdir $(HOME)/.config/wezterm)
+	install .config/wezterm/wezterm.lua $(HOME)/.config/wezterm/
 
-alacritty: $(ALACRITTY)
-
-$(ALACRITTY): $(HOME)/.config/alacritty
-	sudo apt install -y cmake pkg-config libfreetype6-dev libfontconfig1-dev libxcb-xfixes0-dev libxkbcommon-dev python3
-	-mkdir -p $(HOME)/src/github.com/alacritty
-	-cd $(HOME)/src/github.com/alacritty && git clone https://github.com/alacritty/alacritty.git
-	-cd $(HOME)/src/github.com/alacritty/alacritty && $(HOME)/.cargo/bin/cargo build --release
-	-cd $(HOME)/src/github.com/alacritty/alacritty && \
-		sudo cp target/release/alacritty /usr/local/bin/ && \
-		sudo tic -xe alacritty,alacritty-direct extra/alacritty.info && \
-		sudo cp target/release/alacritty /usr/local/bin && \
-		sudo cp extra/logo/alacritty-term.svg /usr/share/pixmaps/Alacritty.svg && \
-		sudo desktop-file-install extra/linux/Alacritty.desktop && \
-		sudo update-desktop-database
-
-$(HOME)/.config/alacritty:
-	cp -r alacritty $(HOME)/.config/
+$(HOME)/.config/zsh/15-wezterm.zsh:
+	install .config/zsh/15-wezterm.zsh $(HOME)/.config/zsh/
 
 
 #=-=-=-= Tmux =-=-=-=
@@ -187,3 +175,4 @@ build:
 
 run:
 	$(CRI_UTIL) run --rm -it --user 1000:1000 -v ${PWD}:/home/ubuntu/dotfiles snbox env TERM="xterm-256color" /usr/bin/zsh
+
