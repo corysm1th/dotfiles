@@ -1,15 +1,18 @@
 #=-=-=-= Targets
 
 .PHONY: zsh \
+	aws \
 	font \
 	fzf \
 	go \
 	hx \
+	kuberntes \
+	minikube \
 	neovim \
 	lazyvim \
 	rust \
-	wezterm \
 	tmux \
+	wezterm \
 	python3
 
 CRI_UTIL := nerdctl
@@ -19,7 +22,7 @@ GO := /usr/local/go/bin/go
 RUST := $(HOME)/.cargo/bin/rustc
 PYTHON_VERSION := 3.13
 DL_DIR := $(HOME)/Downloads
-LAZYGIT_VERSION := $(shell curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | \grep -Po '"tag_name": *"v\K[^"]*')
+LAZYGIT_VERSION := $(shell curl -s "https://api.github.com/repos/jesseduffield/lazygit/releases/latest" | \rg -Po '"tag_name": *"v\K[^"]*')
 
 $(HOME)/.config:
 	mkdir $(HOME)/.config
@@ -111,6 +114,25 @@ $(ZSH_CONFIG)/20-zsh-vim-mode.plugin.zsh:
 		-o $(ZSH_CONFIG)/20-zsh-vi-mode.plugin.zsh
 
 
+#=-=-=-= Zsh Helpers =-=-=-=
+
+aws:
+	-rm -f $(ZSH_CONFIG)/72-aws.zsh
+	install .config/zsh/72-aws.zsh $(ZSH_CONFIG)/72-aws.zsh
+
+kubernetes:
+	-rm -f $(ZSH_CONFIG)/60-kubernetes.zsh
+	install .config/zsh/60-kubernetes.zsh $(ZSH_CONFIG)/60-kubernetes.zsh
+	
+minikube:
+	-rm -f $(ZSH_CONFIG)/60-minikube.zsh
+	install .config/zsh/60-minikube.zsh $(ZSH_CONFIG)/60-minikube.zsh
+
+macos:
+	-rm -f $(ZSH_CONFIG)/90-macos.zsh
+	install .config/zsh/90-macos.zsh $(ZSH_CONFIG)/90-macos.zsh
+
+
 #=-=-=-= Helix =-=-=-=
 
 hx:
@@ -120,10 +142,11 @@ hx:
 #=-=-=-= Rust =-=-=-=
 
 rust: $(RUST)
-	install .config/zsh/80-rust.zsh $(HOME)/.config/zsh/80-rust.zsh
+	install .config/zsh/41-rust.zsh $(HOME)/.config/zsh/41-rust.zsh
 
 $(RUST):
 	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+
 
 #=-=-=-= Wezterm =-=-=-=
 
@@ -146,12 +169,14 @@ tmux: /usr/bin/tmux \
 	install .config/tmux/onedark.tmux ${HOME}/.config/tmux/onedark.tmux
 	$(HOME)/.config/tmux/plugins/tpm/scripts/install_plugins.sh
 
+# Homebrew has the latest stable tmux
 /usr/bin/tmux:
-	sudo apt install -y tmux
+	brew install tmux
 
 ${HOME}/.config/tmux/plugins/tpm:
 	mkdir -p ${HOME}/.config/tmux/plugins
 	git clone --depth 1 https://github.com/tmux-plugins/tpm ~/.config/tmux/plugins/tpm
+
 
 #=-=-=-= Python3 =-=-=-=
 
@@ -175,4 +200,5 @@ build:
 
 run:
 	$(CRI_UTIL) run --rm -it --user 1000:1000 -v ${PWD}:/home/ubuntu/dotfiles snbox env TERM="xterm-256color" /usr/bin/zsh
+
 
