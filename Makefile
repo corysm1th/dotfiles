@@ -167,7 +167,7 @@ tmux: /usr/bin/tmux \
 	${HOME}/.config/tmux/plugins/tpm
 	install .config/tmux/tmux.conf ${HOME}/.config/tmux/tmux.conf
 	install .config/tmux/onedark.tmux ${HOME}/.config/tmux/onedark.tmux
-	$(HOME)/.config/tmux/plugins/tpm/scripts/install_plugins.sh
+	$(HOME)/.config/tmux/plugins/tpm/bin/install_plugins
 
 # Homebrew has the latest stable tmux
 /usr/bin/tmux:
