@@ -144,6 +144,9 @@ hx:
 rust: $(RUST)
 	install .config/zsh/41-rust.zsh $(HOME)/.config/zsh/41-rust.zsh
 
+rust/clean:
+	rm -Rf $(RUST)
+
 $(RUST):
 	curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
