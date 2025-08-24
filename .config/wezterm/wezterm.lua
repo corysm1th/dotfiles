@@ -7,6 +7,11 @@ config.font = wezterm.font("JetBrainsMono Nerd Font Mono")
 
 config.keys = {
 	{
+		key = "+",
+		mods = "SUPER",
+		action = wezterm.action.IncreaseFontSize,
+	},
+	{
 		key = "F2",
 		mods = "NONE",
 		action = wezterm.action.SendString("k_fzf_pod\n"),
