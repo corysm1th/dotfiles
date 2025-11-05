@@ -71,6 +71,7 @@ neovim:
 	-sudo rm -Rf /usr/local/nvim-linux-x86_64
 	sudo tar -xzf ${HOME}/Downloads/nvim-linux-x86_64.tar.gz -C /usr/local/
 	-ln -s /usr/local/nvim-linux-x86_64/bin/nvim $(HOME)/.local/bin/nvim
+	install .config/zsh/99-editor.zsh $(ZSH_CONFIG)/99-editor.zsh
 
 lazyvim: luarocks lazygit
 	-rm -Rf $(HROME)/.local/share/nvim
