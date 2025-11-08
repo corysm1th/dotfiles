@@ -2,6 +2,7 @@
 
 .PHONY: zsh \
 	aws \
+	flutter \
 	font \
 	fzf \
 	go \
@@ -38,6 +39,9 @@ $(DL_DIR):
 # 		-o $(DL_DIR)/JetBrainsMono.zip
 # 	sudo unzip $(DL_DIR)/JetBrainsMono.zip -d /usr/local/share/fonts
 
+#=-=-=-= Flutter =-=-=-=
+flutter:
+	install .config/zsh/45-flutter.zsh $(ZSH_CONFIG)/45-flutter.zsh
 
 #=-=-=-= Go =-=-=-=
 
