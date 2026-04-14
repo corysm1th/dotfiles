@@ -88,6 +88,8 @@ lazyvim: luarocks lazygit
 lazyextras:
 	install .config/nvim/lazyvim.json $(HOME)/.config/nvim/
 	install .config/nvim/lua/plugins/onedark.lua $(HOME)/.config/nvim/lua/plugins/onedark.lua
+	install .config/nvim/lua/plugins/markdown.lua $(HOME)/.config/nvim/lua/plugins/markdown.lua
+	install .config/nvim/.markdownlint-cli2.yaml $(HOME)/.markdownlint-cli2.yaml
 	nvim --headless "+Lazy! sync" +qa
 
 
